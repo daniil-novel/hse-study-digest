@@ -1,0 +1,9 @@
+private/
+out/
+.venv/
+__pycache__/
+*.pyc
+*.session*
+.env*
+*.ics
+!examples/deadlines.ics
