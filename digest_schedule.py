@@ -1,4 +1,5 @@
 """Calendar slots for a personal digest; scheduling is independent of collection."""
+
 import calendar
 import os
 import plistlib
@@ -25,19 +26,26 @@ class Schedule:
             self.catchup = spec["catchup_hours"]
             self.pattern = re.compile(spec.get("date_regex", ""))
             clocks = spec["times"]
-            if not isinstance(clocks, list) or not clocks or any(
-                not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", t) for t in clocks
+            if (
+                not isinstance(clocks, list)
+                or not clocks
+                or any(not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", t) for t in clocks)
             ):
                 raise ValueError
             self.times = sorted({time.fromisoformat(t) for t in clocks})
-            if (self.mode not in {"daily", "weekly", "monthly"} or
-                (self.mode == "weekly" and not self.weekdays) or
-                (self.mode == "monthly" and not self.month_days) or
-                any(type(n) is not int or n == 0 or abs(n) > 31 for n in self.month_days) or
-                type(self.catchup) is not int or not 1 <= self.catchup <= 744):
+            if (
+                self.mode not in {"daily", "weekly", "monthly"}
+                or (self.mode == "weekly" and not self.weekdays)
+                or (self.mode == "monthly" and not self.month_days)
+                or any(type(n) is not int or n == 0 or abs(n) > 31 for n in self.month_days)
+                or type(self.catchup) is not int
+                or not 1 <= self.catchup <= 744
+            ):
                 raise ValueError
         except (TypeError, KeyError, ValueError, ZoneInfoNotFoundError, re.error):
-            raise ValueError("Проверьте [schedule]: режим, часовой пояс, дни, часы, regex и окно 1–744 часа.") from None
+            raise ValueError(
+                "Проверьте [schedule]: режим, часовой пояс, дни, часы, regex и окно 1–744 часа."
+            ) from None
 
     def on(self, day: date):
         if self.mode == "weekly" and day.weekday() not in self.weekdays:
@@ -71,7 +79,9 @@ class Schedule:
         start = now.astimezone(self.zone).date()
         result = []
         for offset in range(731):
-            result.extend(t.astimezone(self.zone) for t in self.on(start + timedelta(days=offset)) if t > now)
+            result.extend(
+                t.astimezone(self.zone) for t in self.on(start + timedelta(days=offset)) if t > now
+            )
             if len(result) >= count:
                 break
         return result[:count]
@@ -98,12 +108,21 @@ def launch_agent(root: Path, remove=False):
         return
     destination.parent.mkdir(parents=True, exist_ok=True)
     paths = [str(Path(sys.executable).parent)]
-    paths.extend(str(Path(p).parent) for name in ("telegram-mcp", "codex", "claude") if (p := shutil.which(name)))
+    paths.extend(
+        str(Path(p).parent) for name in ("telegram-mcp", "codex", "claude") if (p := shutil.which(name))
+    )
     paths.extend(os.environ.get("PATH", os.defpath).split(os.pathsep))
-    content = {"Label": LABEL, "ProgramArguments": [sys.executable, str(root / "digest.py"), "tick"],
-               "WorkingDirectory": str(root), "EnvironmentVariables": {"PATH": os.pathsep.join(dict.fromkeys(paths))},
-               "StartInterval": 60, "RunAtLoad": True, "StandardOutPath": str(root / "private/schedule.log"),
-               "StandardErrorPath": str(root / "private/schedule-errors.log"), "Umask": 0o077}
+    content = {
+        "Label": LABEL,
+        "ProgramArguments": [sys.executable, str(root / "digest.py"), "tick"],
+        "WorkingDirectory": str(root),
+        "EnvironmentVariables": {"PATH": os.pathsep.join(dict.fromkeys(paths))},
+        "StartInterval": 60,
+        "RunAtLoad": True,
+        "StandardOutPath": str(root / "private/schedule.log"),
+        "StandardErrorPath": str(root / "private/schedule-errors.log"),
+        "Umask": 0o077,
+    }
     temp = destination.with_suffix(".tmp")
     temp.write_bytes(plistlib.dumps(content))
     temp.chmod(0o600)

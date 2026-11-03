@@ -1,4 +1,5 @@
 """Build local extraction rules from this public synthetic curriculum only."""
+
 import json
 import re
 import tomllib
@@ -8,19 +9,33 @@ from study_report import write
 
 # Labels are the only output strings a matched rule can add to a student's digest.
 LESSONS = {
-    "references": ("Подготовить список источников",
-                   ["К пятнице оформите список источников.", "В приложение включить библиографию."]),
-    "diagram": ("Приложить схему решения",
-                ["К отчёту приложите схему решения.", "До защиты нарисовать блок-схему алгоритма."]),
-    "demo": ("Записать демонстрацию",
-             ["Для семинара запишите демонстрацию.", "К среде снять демонстрационное видео."]),
-    "defence": ("Подать заявку на защиту",
-                ["В этом модуле подайте заявку на защиту.", "К четвергу зарегистрироваться на защиту."]),
+    "references": (
+        "Подготовить список источников",
+        ["К пятнице оформите список источников.", "В приложение включить библиографию."],
+    ),
+    "diagram": (
+        "Приложить схему решения",
+        ["К отчёту приложите схему решения.", "До защиты нарисовать блок-схему алгоритма."],
+    ),
+    "demo": (
+        "Записать демонстрацию",
+        ["Для семинара запишите демонстрацию.", "К среде снять демонстрационное видео."],
+    ),
+    "defence": (
+        "Подать заявку на защиту",
+        ["В этом модуле подайте заявку на защиту.", "К четвергу зарегистрироваться на защиту."],
+    ),
 }
-NEGATIVES = ["На семинаре обсудили список источников и схему решения.", "Сегодня посмотрели демонстрационное видео.",
-             "Вчера на паре говорили про защиту.", "Где найти список источников?",
-             "Подайте заявку на проживание в общежитии.", "Оформите список участников встречи.",
-             "Приложите фотографию к анкете.", "Запишите номер кабинета."]
+NEGATIVES = [
+    "На семинаре обсудили список источников и схему решения.",
+    "Сегодня посмотрели демонстрационное видео.",
+    "Вчера на паре говорили про защиту.",
+    "Где найти список источников?",
+    "Подайте заявку на проживание в общежитии.",
+    "Оформите список участников встречи.",
+    "Приложите фотографию к анкете.",
+    "Запишите номер кабинета.",
+]
 PLAN_REQUEST = """Выбери короткие поисковые правила для русского учебного текста. Все примеры вымышлены.
 Выдай только JSON {"rules":[{"type":"код типа","phrases":["глагол объект","другой глагол объект"]}]}.
 Для каждого типа покрой оба положительных примера. Каждая фраза должна совпадать в соответствующем
@@ -57,8 +72,13 @@ def validated(items):
         if not isinstance(entry, dict) or set(entry) != {"type", "phrases"}:
             raise ValueError("У правила должны быть только поля type и phrases.")
         key, phrases = entry["type"], entry["phrases"]
-        if (not isinstance(key, str) or key not in LESSONS or key in found
-            or not isinstance(phrases, list) or not 1 <= len(phrases) <= 4):
+        if (
+            not isinstance(key, str)
+            or key not in LESSONS
+            or key in found
+            or not isinstance(phrases, list)
+            or not 1 <= len(phrases) <= 4
+        ):
             raise ValueError("Неизвестный тип, повтор типа или неверное число фраз.")
         found.add(key)
         label, positives = LESSONS[key]
@@ -71,7 +91,9 @@ def validated(items):
             if not hits or any(regex.search(line) for line in others):
                 raise ValueError("Фраза не прошла проверку на учебных примерах. Повторите plan-local.")
             # The public examples share an explicit verb immediately before the object.
-            if not re.match(r"(?:оформ|включ|прилож|нарис|запиш|запис|снять|подай|подат|зарег)", phrase):
+            if not re.match(
+                r"(?:оформ|включ|прилож|нарис|запиш|запис|снять|подай|подат|зарег)", phrase
+            ):
                 raise ValueError("Начните каждую фразу с глагола поручения.")
             matched.update(hits)
             result.append((regex, label))
@@ -82,17 +104,30 @@ def validated(items):
 
 def make_plan(provider, private):
     # Only these source-code constants are supplied to the CLI. No feedback from local runs.
-    seed = {"types": {k: {"label": label, "positive": examples} for k, (label, examples) in LESSONS.items()},
-            "negative": NEGATIVES}
+    seed = {
+        "types": {
+            k: {"label": label, "positive": examples} for k, (label, examples) in LESSONS.items()
+        },
+        "negative": NEGATIVES,
+    }
     answer = model_json(provider, private, PLAN_REQUEST, seed)
     if not isinstance(answer, dict) or set(answer) != {"rules"}:
         raise ValueError("Модель вернула неверный формат локального плана.")
     rules = answer["rules"]
     compiled = validated(rules)
-    lines = ["# Проверено на встроенных вымышленных примерах. Исходных сообщений здесь нет.", "version = 1"]
+    lines = [
+        "# Проверено на встроенных вымышленных примерах. Исходных сообщений здесь нет.",
+        "version = 1",
+    ]
     for entry in rules:
-        lines.extend(["", "[[rules]]", "type = " + json.dumps(entry["type"]),
-                      "phrases = " + json.dumps(entry["phrases"], ensure_ascii=False)])
+        lines.extend(
+            [
+                "",
+                "[[rules]]",
+                "type = " + json.dumps(entry["type"]),
+                "phrases = " + json.dumps(entry["phrases"], ensure_ascii=False),
+            ]
+        )
     write(private / "plan-local.toml", "\n".join(lines) + "\n")
     print(f"Сохранён plan-local.toml: проверенных поисковых фраз — {len(compiled)}.")
 

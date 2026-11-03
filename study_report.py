@@ -115,7 +115,7 @@ def render(rows, folder, demo, now):
     return html
 
 
-def deliver(html, folder, now, *, slot=None, mailbox=None, host=None, password=None, attachment=None):
+def deliver(html, folder, now, *, slot=None, mailbox=None, host=None, port=465, password=None, attachment=None):
     mailbox = (mailbox if mailbox is not None else os.getenv("DIGEST_EMAIL", "")).strip()
     host = (host if host is not None else os.getenv("DIGEST_SMTP_HOST", "")).strip()
     password = password or os.getenv("DIGEST_SMTP_PASSWORD")
@@ -145,7 +145,7 @@ def deliver(html, folder, now, *, slot=None, mailbox=None, host=None, password=N
         record = previous()
         if record:
             return report_previous(record)
-        with smtplib.SMTP_SSL(host, 465, timeout=30, context=ssl.create_default_context()) as smtp:
+        with smtplib.SMTP_SSL(host, port, timeout=30, context=ssl.create_default_context()) as smtp:
             smtp.login(mailbox, password)
             try:
                 db.execute("INSERT INTO mail VALUES (?,?,?)", (str(slot), mailbox, "pending"))

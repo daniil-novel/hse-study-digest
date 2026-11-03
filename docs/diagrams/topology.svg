@@ -147,14 +147,14 @@
     <tspan x="45" dy="0">Голубые блоки обращаются к внешним сервисам в рабочем режиме. Жёлтые файлы редактирует участник.</tspan>
   </text>
   <text x="45" y="863.65" fill="#265d51" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="15" font-weight="700">
-    <tspan x="45" dy="0">ЕЩЁ ДВА ПУТИ К ТОЙ ЖЕ ТАБЛИЦЕ</tspan>
+    <tspan x="45" dy="0">ЕЩЁ ДВА ПУТИ К ТОЙ ЖЕ ТАБЛИЦЕ   /   ЛОКАЛЬНЫЙ ПЛАН — СХЕМА 03</tspan>
   </text>
   <path d="M56 883 Q273.2 881.7 450 883.4 Q460 883.6 460 894 Q461.0 924.5 459.7 956 Q460 966 450 966 Q231.8 967.0 55 965.6 Q45 966 45 956 Q44.0 920.4 45 893 Q45 883 56 883Z" fill="#f4f2ec" stroke="#203543" stroke-width="1.85" stroke-linejoin="round" />
   <text x="60" y="912.2" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="20" font-weight="700">
     <tspan x="60" dy="0">Локальный режим</tspan>
   </text>
   <text x="60" y="939.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
-    <tspan x="60" dy="0">Правила на Mac извлекают поручения.</tspan>
+    <tspan x="60" dy="0">plan-local.toml и базовые правила.</tspan>
   </text>
   <path d="M496 883 Q691.2 881.7 850 883.4 Q860 883.6 860 894 Q861.0 924.5 859.7 956 Q860 966 850 966 Q653.8 967.0 495 965.6 Q485 966 485 956 Q484.0 920.4 485 893 Q485 883 496 883Z" fill="#f4f2ec" stroke="#203543" stroke-width="1.85" stroke-linejoin="round" />
   <text x="500" y="912.2" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="20" font-weight="700">
