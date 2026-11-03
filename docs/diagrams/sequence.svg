@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1280" viewBox="0 0 1400 1280" role="img" aria-labelledby="sequence-title sequence-desc">
+  <title id="sequence-title">Как проходит запрос и проверяется ответ</title>
+  <desc id="sequence-desc">Последовательность сообщений между языковой моделью, локальным шлюзом, Telegram MCP и файлами участника. Сплошная стрелка обозначает запрос или запись, пунктир — ответ.</desc>
+  <rect x="0" y="0" width="1400" height="1280" fill="#fffcf6" />
+  <text x="42" y="41.56" fill="#265d51" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="700">
+    <tspan x="42" dy="0">ПРАКТИКУМ   /   02</tspan>
+  </text>
+  <text x="42" y="88.85" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="35" font-weight="700">
+    <tspan x="42" dy="0">Как проходит запрос и проверяется ответ</tspan>
+  </text>
+  <text x="44" y="126.38" fill="#415967" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="18" font-weight="400">
+    <tspan x="44" dy="0">Режим cloud. Читайте сверху вниз. Сплошная стрелка — действие, пунктир — ответ.</tspan>
+  </text>
+  <polyline points="177,233 177,1208" fill="none" stroke="#a9b6b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <path d="M64 162 Q189.4 160.7 291 162.4 Q301 162.6 301 173 Q302.0 194.5 300.7 217 Q301 227 291 227 Q164.6 228.0 63 226.6 Q53 227 53 217 Q52.0 191.2 53 172 Q53 162 64 162Z" fill="#e8f0fc" stroke="#365c81" stroke-width="1.85" stroke-linejoin="round" />
+  <text x="71" y="186.29" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="19" font-weight="700">
+    <tspan x="71" dy="0">Агент</tspan>
+  </text>
+  <text x="71" y="209.65" fill="#415967" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400">
+    <tspan x="71" dy="0">Codex / Claude</tspan>
+  </text>
+  <polyline points="530,233 530,1208" fill="none" stroke="#a9b6b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <path d="M417 162 Q542.4 160.7 644 162.4 Q654 162.6 654 173 Q655.0 194.5 653.7 217 Q654 227 644 227 Q517.6 228.0 416 226.6 Q406 227 406 217 Q405.0 191.2 406 172 Q406 162 417 162Z" fill="#dff3e9" stroke="#265d51" stroke-width="1.85" stroke-linejoin="round" />
+  <text x="424" y="186.29" fill="#265d51" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="19" font-weight="700">
+    <tspan x="424" dy="0">Локальный шлюз</tspan>
+  </text>
+  <text x="424" y="209.65" fill="#415967" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400">
+    <tspan x="424" dy="0">программа студента</tspan>
+  </text>
+  <polyline points="884,233 884,1208" fill="none" stroke="#a9b6b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <path d="M771 162 Q896.4 160.7 998 162.4 Q1008 162.6 1008 173 Q1009.0 194.5 1007.7 217 Q1008 227 998 227 Q871.6 228.0 770 226.6 Q760 227 760 217 Q759.0 191.2 760 172 Q760 162 771 162Z" fill="#e8f0fc" stroke="#365c81" stroke-width="1.85" stroke-linejoin="round" />
+  <text x="778" y="186.29" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="19" font-weight="700">
+    <tspan x="778" dy="0">Telegram MCP</tspan>
+  </text>
+  <text x="778" y="209.65" fill="#415967" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400">
+    <tspan x="778" dy="0">stdio-сервер</tspan>
+  </text>
+  <polyline points="1238,233 1238,1208" fill="none" stroke="#a9b6b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <path d="M1125 162 Q1250.4 160.7 1352 162.4 Q1362 162.6 1362 173 Q1363.0 194.5 1361.7 217 Q1362 227 1352 227 Q1225.6 228.0 1124 226.6 Q1114 227 1114 217 Q1113.0 191.2 1114 172 Q1114 162 1125 162Z" fill="#fff1cf" stroke="#76531f" stroke-width="1.85" stroke-linejoin="round" />
+  <text x="1132" y="186.29" fill="#76531f" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="19" font-weight="700">
+    <tspan x="1132" dy="0">Локальные файлы</tspan>
+  </text>
+  <text x="1132" y="209.65" fill="#415967" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400">
+    <tspan x="1132" dy="0">реестр и отчёт</tspan>
+  </text>
+  <path d="M51 246 Q766.0 244.7 1350 246.4 Q1360 246.6 1360 257 Q1361.0 264.5 1359.7 273 Q1360 283 1350 283 Q634.0 284.0 50 282.6 Q40 283 40 273 Q39.0 262.6 40 256 Q40 246 51 246Z" fill="#f0f1e9" stroke="#b5c0b7" stroke-width="1.85" stroke-linejoin="round" />
+  <text x="55" y="267.47" fill="#265d51" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="17" font-weight="700">
+    <tspan x="55" dy="0">A   /   Начало сеанса и перечень групп</tspan>
+  </text>
+  <polyline points="530,321 879,321" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="869,317 879,321 869,325" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="309.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">initialize и tools/list</tspan>
+  </text>
+  <polyline points="884,366 535,366" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <polyline points="545,370 535,366 545,362" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="354.56" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">возможности и список инструментов</tspan>
+  </text>
+  <polyline points="530,411 879,411" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="869,407 879,411 869,415" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="399.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">tools/call · list_dialogs</tspan>
+  </text>
+  <polyline points="884,456 535,456" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <polyline points="545,460 535,456 545,452" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="444.56" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">items, has_more, next_cursor</tspan>
+  </text>
+  <path d="M51 486 Q766.0 484.7 1350 486.4 Q1360 486.6 1360 497 Q1361.0 504.5 1359.7 513 Q1360 523 1350 523 Q634.0 524.0 50 522.6 Q40 523 40 513 Q39.0 502.6 40 496 Q40 486 51 486Z" fill="#f0f1e9" stroke="#b5c0b7" stroke-width="1.85" stroke-linejoin="round" />
+  <text x="55" y="507.47" fill="#265d51" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="17" font-weight="700">
+    <tspan x="55" dy="0">Б   /   discover — к какому предмету относится группа</tspan>
+  </text>
+  <polyline points="530,560 182,560" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="192,564 182,560 192,556" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="192" y="548.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="192" dy="0">псевдонимы и предметы из ИУП</tspan>
+  </text>
+  <polyline points="177,605 525,605" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <polyline points="515,601 525,605 515,609" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" />
+  <text x="192" y="593.56" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="192" dy="0">read_samples · выбор групп</tspan>
+  </text>
+  <polyline points="530,650 879,650" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="869,646 879,650 869,654" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="638.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">tools/call · messages_between</tspan>
+  </text>
+  <polyline points="884,695 535,695" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <polyline points="545,699 535,695 545,691" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="683.56" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">items, has_more, next_before_id</tspan>
+  </text>
+  <polyline points="530,740 182,740" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="192,744 182,740 192,736" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="192" y="728.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="192" dy="0">разрешённые фрагменты</tspan>
+  </text>
+  <polyline points="177,785 525,785" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <polyline points="515,781 525,785 515,789" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" />
+  <text x="192" y="773.56" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="192" dy="0">предмет, решение и цитата</tspan>
+  </text>
+  <polyline points="530,830 1233,830" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="1223,826 1233,830 1223,834" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="818.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">проверенный выбор → chats.toml и свидетельства</tspan>
+  </text>
+  <path d="M51 860 Q766.0 858.7 1350 860.4 Q1360 860.6 1360 871 Q1361.0 878.5 1359.7 887 Q1360 897 1350 897 Q634.0 898.0 50 896.6 Q40 897 40 887 Q39.0 876.6 40 870 Q40 860 51 860Z" fill="#f0f1e9" stroke="#b5c0b7" stroke-width="1.85" stroke-linejoin="round" />
+  <text x="55" y="881.47" fill="#265d51" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="17" font-weight="700">
+    <tspan x="55" dy="0">В   /   run — какие поручения и сроки появились</tspan>
+  </text>
+  <polyline points="530,935 182,935" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="192,939 182,935 192,931" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="192" y="923.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="192" dy="0">выбранные группы и read_page</tspan>
+  </text>
+  <polyline points="177,980 525,980" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <polyline points="515,976 525,980 515,984" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" />
+  <text x="192" y="968.56" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="192" dy="0">read_page · выбранная группа</tspan>
+  </text>
+  <polyline points="530,1025 879,1025" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="869,1021 879,1025 869,1029" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="1013.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">messages_between · окно и страница</tspan>
+  </text>
+  <polyline points="884,1070 535,1070" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <polyline points="545,1074 535,1070 545,1066" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="1058.56" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">сообщения выбранной группы</tspan>
+  </text>
+  <polyline points="530,1115 182,1115" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="192,1119 182,1115 192,1111" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="192" y="1103.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="192" dy="0">фрагменты с ID сообщений</tspan>
+  </text>
+  <polyline points="177,1160 525,1160" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" />
+  <polyline points="515,1156 525,1160 515,1164" fill="none" stroke="#365c81" stroke-width="2" stroke-linecap="round" />
+  <text x="192" y="1148.56" fill="#365c81" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="192" dy="0">поручения, ID сообщений, цитаты</tspan>
+  </text>
+  <polyline points="530,1205 1233,1205" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <polyline points="1223,1201 1233,1205 1223,1209" fill="none" stroke="#203543" stroke-width="2" stroke-linecap="round" />
+  <text x="545" y="1193.56" fill="#203543" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="16" font-weight="400">
+    <tspan x="545" dy="0">сверенные строки → digest.html и digest.csv</tspan>
+  </text>
+  <text x="43" y="1257.65" fill="#415967" font-family="Arial, 'DejaVu Sans', sans-serif" font-size="15" font-weight="400">
+    <tspan x="43" dy="0">Шлюз применяет исключения до выдачи текста. Дополнительные страницы повторяют соответствующую пару запрос–ответ.</tspan>
+  </text>
+</svg>

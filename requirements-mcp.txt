@@ -1,0 +1,7 @@
+mcp==1.30.0
+python-dotenv>=1.2,<2
+# Проверяем контрольную сумму официального релиза сервера.
+telegram-mcp @ https://github.com/daniil-novel/telegram-mcp/releases/download/v0.2.2/telegram_mcp-0.2.2-py3-none-any.whl#sha256=ab61e133c39b311c48416d84f1cf79f6b1338cd7e0895695580259919014ecb8
+tomlkit>=0.13,<1
+filelock>=3.16,<4
+tzdata>=2024.1

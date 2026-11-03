@@ -42,7 +42,7 @@ def table(rows):
     for row in rows:
         task = " ".join(row["task"].split())
         course, due = row["course"], row["due"]
-        base = (course, " ".join((DATE.sub("", task) if due else task).casefold().split()))
+        base = (course, " ".join((DATE.sub("", task) if due else task).casefold().split()), row.get("identity", ""))
         key = (base, due)
         if key not in grouped:
             grouped[key] = [task, []]
@@ -115,19 +115,22 @@ def render(rows, folder, demo, now):
     return html
 
 
-def deliver(html, folder, now):
-    mailbox = os.getenv("DIGEST_EMAIL", "").strip()
-    host = os.getenv("DIGEST_SMTP_HOST", "").strip()
-    password = os.getenv("DIGEST_SMTP_PASSWORD")
+def deliver(html, folder, now, *, slot=None, mailbox=None, host=None, password=None, attachment=None):
+    mailbox = (mailbox if mailbox is not None else os.getenv("DIGEST_EMAIL", "")).strip()
+    host = (host if host is not None else os.getenv("DIGEST_SMTP_HOST", "")).strip()
+    password = password or os.getenv("DIGEST_SMTP_PASSWORD")
     if not re.fullmatch(r"[\w.+%-]+@[\w.-]+\.[A-Za-z]{2,}", mailbox) or not host or not password:
         raise ValueError("Нужны DIGEST_EMAIL (один адрес), DIGEST_SMTP_HOST и DIGEST_SMTP_PASSWORD.")
     day = now.date()
-    slot = day - timedelta(days=day.weekday() if day.weekday() < 3 else day.weekday() - 3)
+    if slot is None:  # Compatibility with the original Windows exercise.
+        slot = day - timedelta(days=day.weekday() if day.weekday() < 3 else day.weekday() - 3)
     message = EmailMessage()
     message["From"] = message["To"] = mailbox
     message["Subject"] = f"Учебные задания · {day:%d.%m.%Y}"
     message.set_content("Учебный дайджест доступен в HTML-версии письма.")
     message.add_alternative(html, subtype="html")
+    if attachment is not None:
+        message.add_attachment(attachment, maintype="text", subtype="csv", filename="digest.csv")
     with closing(sqlite3.connect(folder / "mail.sqlite")) as db:
         db.execute("CREATE TABLE IF NOT EXISTS mail(slot TEXT, mailbox TEXT, state TEXT, PRIMARY KEY(slot,mailbox))")
         def previous():

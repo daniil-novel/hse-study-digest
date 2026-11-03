@@ -1,6 +1,6 @@
 # Как проверяются календарные дедлайны
 
-[Оглавление](README.md) · [Открыть тесты](../tests/test_lms_calendar.py) · [Учебный календарь](../examples/deadlines.ics)
+[Оглавление](README.md) · [Открыть тесты](https://github.com/daniil-novel/hse-study-digest/blob/670aa644cd3d2edf0548427b09f3eb998f549e33/tests/test_lms_calendar.py) · [Учебный календарь](https://github.com/daniil-novel/hse-study-digest/blob/670aa644cd3d2edf0548427b09f3eb998f549e33/examples/deadlines.ics)
 
 Эти проверки защищают от двух особенно неудобных ошибок. Семинар может попасть в список заданий только потому, что у него есть дата. Личная ссылка календаря может случайно оказаться в итоговом письме. В файле `tests/test_lms_calendar.py` исходные данные вымышлены. Можно выполнить все проверки без доступа к SmartLMS.
 
