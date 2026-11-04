@@ -174,7 +174,8 @@ def main():
         if result is not None:
             print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
         return
-    load_environment(ROOT)  # Каждый рабочий запуск перечитывает .env, сервис не держит его в памяти.
+    # Telegram-поля читает шлюз из выбранного файла; ROOT/.env не должен изображать переменные ОС.
+    load_environment(ROOT, include_telegram=False)
     if cmd in {"search", "wiki", "done", "reopen"}:
         from agent_code import knowledge
 
@@ -210,18 +211,9 @@ def main():
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return
     if cmd == "telegram-login":
-        from pathlib import Path
-        from telegram_stdio import executable, private_path
+        from telegram_stdio import authorize
 
-        if cfg["mcp"]["demo"]:
-            raise ValueError("В учебном режиме вход в Telegram не нужен.")
-        spec = Path(cfg["mcp"]["env_file"]).expanduser()
-        env_file = spec if spec.is_absolute() else private_path(PRIVATE, spec)
-        # Interactive terminal belongs to the student: Telegram code and 2FA never enter a prompt.
-        subprocess.run(
-            [executable(cfg["mcp"]["executable"]), "--env-file", str(env_file), "auth"], check=True
-        )
-        return
+        return authorize(cfg, PRIVATE)  # Штатная сессия повторно используется, новый код вводится только владельцем.
     if cmd == "local":
         cfg["agent"]["mode"] = "local"
     now = datetime.now(MOSCOW)  # Один момент времени связывает сбор, отчёт и почтовый выпуск.

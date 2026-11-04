@@ -16,6 +16,7 @@ ENV_KEYS = frozenset(
         "TELEGRAM_API_ID",
         "TELEGRAM_API_HASH",
         "TELEGRAM_PHONE",
+        "TELEGRAM_2FA_PASSWORD",  # Необязательный пароль облачной проверки; код входа здесь не хранится.
         "TELEGRAM_ALLOWED_CHAT_IDS",  # Штатный список разрешённых источников MCP.
         "TELEGRAM_DENIED_CHAT_IDS",  # Явный запрет источника сохраняет приоритет в шлюзе.
         "TELEGRAM_SESSION_DIR",  # Путь к штатному хранилищу входа, а не сама сессия.
@@ -53,11 +54,12 @@ def _validate(values: dict[str, str | None]) -> None:
             raise ValueError("LMS_URL допускает только официальный https://edu.hse.ru.")
 
 
-def load_environment(root: Path) -> tuple[str, ...]:
+def load_environment(root: Path, *, include_telegram: bool = True) -> tuple[str, ...]:
     """Добавить разрешённые непустые значения ROOT/.env, сохранив уже заданные.
 
     Args:
         root: Корень данного экземпляра проекта, а не текущая папка терминала.
+        include_telegram: False оставляет выбор Telegram-файла шлюзу и не повышает его поля до переменных ОС.
 
     Returns:
         Имена добавленных переменных. Сами значения функция не возвращает и не печатает.
@@ -95,6 +97,8 @@ def load_environment(root: Path) -> tuple[str, ...]:
                     continue
                 if any(c in value for c in ("\n", "\r", "\x00")):
                     raise ValueError  # Секреты и адреса здесь должны занимать одну строку.
+                if not include_telegram and key.startswith("TELEGRAM_"):
+                    continue  # Явно выбранный внешний .env читает MCP-шлюз; ROOT/.env не перекрывает его.
                 escaped = value.replace("\\", "\\\\").replace("'", "\\'")
                 lines.append(
                     f"{key}='{escaped}'"
