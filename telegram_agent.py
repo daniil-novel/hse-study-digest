@@ -183,7 +183,11 @@ async def ask(scope, private, instructions, data, ids):
             raise ValueError("Разрешение изменилось или истекло. Данные группы не переданы дальше.")
 
     guard()
-    answer = await asyncio.to_thread(model_json, scope.provider, private, instructions, data)
+    from agent_code.skills import instructions as skill_instructions
+
+    # Скилл даёт общие правила, инструкция этапа задаёт точную JSON-схему ответа.
+    prompt = skill_instructions("study-collector") + "\n\n" + instructions
+    answer = await asyncio.to_thread(model_json, scope.provider, private, prompt, data)
     guard()
     if not isinstance(answer, dict):
         raise ValueError("Агент не вернул JSON-объект.")
@@ -284,6 +288,8 @@ async def collect(mode, config, private, courses, tracked, excluded_ids, exclude
     if scope.demo:
         courses = {DEMO_COURSE: []}
     scopes = scope.permitted()
+    if not scope.demo and not scopes:
+        raise ValueError("Для облачного разбора заполните действующую область в private/telegram-scopes.toml.")
     # Honor both caller decisions and the last saved exclusion list.
     stored = tomllib.loads(scope.chats_data.decode("utf-8-sig")).get("exclude", {})
     local = {} if scope.demo else config.get("local", {})
@@ -389,6 +395,7 @@ async def collect(mode, config, private, courses, tracked, excluded_ids, exclude
                                 due=exact_due(q),
                                 url=url,
                                 source=f"Telegram MCP · {title} · {key}/{n}",
+                                identity=f"{key}/{n}",  # Один источник сохраняет свой ключ при правке текста.
                             )
                         )
                 cursors[alias] = cursor

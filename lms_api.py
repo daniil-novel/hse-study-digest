@@ -94,6 +94,7 @@ def read_tasks(course_ids: dict, courses: dict, now: datetime) -> list[dict]:
                 or not start <= stamp <= end or not isinstance(title, str) or not title.strip()):
                 raise ValueError(INVALID)
             tasks.append(dict(course=name, task=f"Сдать задание «{title.strip()}».",
+                              identity=f"lms/{course_id}/{module_id}",
                               due=datetime.fromtimestamp(stamp, MOSCOW).strftime("%Y-%m-%d %H:%M"),
                               source=f"Smart LMS · API · №{event['id']}",
                               url=f"https://edu.hse.ru/mod/assign/view.php?id={module_id}"))

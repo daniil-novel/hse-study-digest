@@ -95,7 +95,7 @@ def read_tasks(location: str, courses: dict[str, list[str]]) -> list[dict]:
             due = value.isoformat()
         uid = str(event.get("UID", "") or f"{matches[0]} {title} {due}")
         short_id = hashlib.sha256(uid.encode()).hexdigest()[:10]
-        tasks.append(dict(course=matches[0], task=title, due=due, source=f"Smart LMS · ICS {short_id}", url=card_url(event.get("URL", ""))))
+        tasks.append(dict(course=matches[0], task=title, due=due, identity=f"ics/{uid}", source=f"Smart LMS · ICS {short_id}", url=card_url(event.get("URL", ""))))
     if skipped:
         warnings.warn(f"Календарь: пропущено событий со сроком: {skipped}. Проверьте псевдонимы курсов и повторяющиеся события.")
     return tasks

@@ -6,4 +6,7 @@ __pycache__/
 *.session*
 .env*
 *.ics
-!examples/deadlines.ics
+!tests/fixtures/deadlines.ics
+.agents/
+.claude/
+node_modules/

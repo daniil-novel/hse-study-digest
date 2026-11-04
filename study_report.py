@@ -39,14 +39,21 @@ def link(value):
 def table(rows):
     grouped = {}
     deadlines = defaultdict(set)
+    states = {}  # Ручной статус и свежесть наблюдения принадлежат конкретной карточке.
     for row in rows:
         task = " ".join(row["task"].split())
         course, due = row["course"], row["due"]
         base = (course, " ".join((DATE.sub("", task) if due else task).casefold().split()), row.get("identity", ""))
         key = (base, due)
+        states[key] = (row.get("user_status", "open"), row.get("availability", "observed"))
         if key not in grouped:
             grouped[key] = [task, []]
-        pair = (row["source"], link(row["url"]))
+        source_title = row["source"]
+        if row.get("task_id"):
+            source_title += " · " + row["task_id"]  # ID можно скопировать в команду done.
+        if row.get("last_observed"):
+            source_title += " · наблюдение " + row["last_observed"]  # Отличаем старые сведения от свежих.
+        pair = (source_title, link(row["url"]))
         if pair not in grouped[key][1]:
             grouped[key][1].append(pair)
         if due:
@@ -59,6 +66,11 @@ def table(rows):
             status = "Уточнить по источнику"
         else:
             status = "Срок указан"
+        done, availability = states[(base, due)]
+        if done == "done":
+            status = "Выполнено (отметка студента)"
+        elif availability == "not_checked":
+            status += " · источник не перепроверен"
         output.append((base[0], task, due or "Не уточнён", status, sorted(sources)))
     return sorted(output, key=lambda row: (row[2] == "Не уточнён", row[2], row[0], row[1]))
 

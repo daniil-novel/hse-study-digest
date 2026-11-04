@@ -42,6 +42,7 @@ def executable(value):
 
 @asynccontextmanager
 async def server(config, private, allowed=None):
+    """Запустить настоящий процесс MCP, согласовать протокол и гарантированно закрыть соединение."""
     try:
         from dotenv import dotenv_values
         from mcp import ClientSession, StdioServerParameters
@@ -73,6 +74,11 @@ async def server(config, private, allowed=None):
             "TELEGRAM_SEND_TO_ANY_CHAT": "false",
             "PYTHONUTF8": "1",
         }
+        # В дочерний процесс передаём только настройки Telegram, без пароля SMTP.
+        if not demo:
+            for name in ("TELEGRAM_API_ID", "TELEGRAM_API_HASH", "TELEGRAM_PHONE", "TELEGRAM_SESSION_DIR"):
+                if os.environ.get(name):
+                    env[name] = os.environ[name]
         if allowed is not None or (not demo and "TELEGRAM_ALLOWED_CHAT_IDS" in os.environ):
             # Constrain the upstream allowlist, never enlarge the owner's original ACL.
             ids = None if allowed is None else {str(x) for x in allowed}
@@ -118,6 +124,7 @@ async def server(config, private, allowed=None):
 
 
 async def page(session, name, params, demo):
+    """Запросить одну страницу и проверить источник, формат и признаки полноты ответа."""
     if name not in {"list_dialogs", "messages_between"}:
         raise ValueError("Шлюз разрешает только чтение списка или заданного периода.")
     response = await session.call_tool(name, arguments={"params": params})

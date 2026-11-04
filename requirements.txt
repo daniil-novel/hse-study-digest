@@ -1,1 +1,3 @@
-Telethon>=1.40,<2
+# Полный набор зависимостей для обеих операционных систем.
+-r requirements-mcp.txt
+-r requirements-calendar.txt

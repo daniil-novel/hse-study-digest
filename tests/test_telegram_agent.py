@@ -16,10 +16,10 @@ DEMO = {"mcp": {"demo": True}, "agent": {"provider": "codex"}, "scan": {"page_si
 
 
 def model(provider, private, instructions, payload):
-    if instructions == agent.PLAN:
+    if instructions.endswith(agent.PLAN):
         return {"tool": payload["available_tool"], "groups": [g["group"] for g in payload["groups"]]}
     messages = payload["messages"]
-    if instructions == agent.CLASSIFY:
+    if instructions.endswith(agent.CLASSIFY):
         return {
             "course": payload["allowed_courses"][0],
             "id": messages[0]["id"],
@@ -82,7 +82,7 @@ class AgentTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual([r["due"] for r in rows], ["2026-10-10", ""])
             self.assertTrue(all(r["url"] == "" for r in rows))
             self.assertEqual(calls, [(fake_key, 0), (fake_key, 0), (fake_key, 4)])
-            self.assertEqual(llm.call_args_list[0].args[2], agent.PLAN)
+            self.assertTrue(llm.call_args_list[0].args[2].endswith(agent.PLAN))
             self.assertNotIn("исключить", str(llm.call_args_list))
             await agent.collect("discover", DEMO, p, {}, tracked, [], ["исключить"])
             self.assertIn(

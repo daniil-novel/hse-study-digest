@@ -24,14 +24,14 @@ class CalendarTests(unittest.TestCase):
 
     @unittest.skipUnless(icalendar, "optional calendar package")
     def test_deadline_in_moscow_and_class_skipped(self):
-        rows = read_tasks("examples/deadlines.ics", {"Алгоритмы": []})
+        rows = read_tasks("tests/fixtures/deadlines.ics", {"Алгоритмы": []})
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["due"], "2026-11-09 20:59")
         self.assertEqual(rows[0]["task"], "Срок сдачи отчёта по практике")
 
     @unittest.skipUnless(icalendar, "optional calendar package")
     def test_all_day_floating_and_cancelled(self):
-        base = (ROOT / "examples/deadlines.ics").read_text(encoding="utf-8")
+        base = (ROOT / "tests/fixtures/deadlines.ics").read_text(encoding="utf-8")
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder, "sample.ics")
             for time, due in [(";VALUE=DATE:20261109", "2026-11-09"), (":20261109T175900", "")]:

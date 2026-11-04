@@ -1,5 +1,4 @@
 import asyncio
-import csv
 import io
 import json
 import os
@@ -23,19 +22,6 @@ NOW = datetime(2026, 11, 4, 10, tzinfo=MOSCOW)
 
 
 class DigestTests(unittest.TestCase):
-    def test_demo_is_offline_repeatable_and_keeps_evidence(self):
-        with tempfile.TemporaryDirectory() as d, patch.object(study, "OUT", Path(d)), redirect_stdout(io.StringIO()):
-            study.demo()
-            path = Path(d) / "demo" / "digest.csv"
-            first = path.read_bytes()
-            study.demo()
-            self.assertEqual(first, path.read_bytes())
-            rows = list(csv.DictReader(io.StringIO(first.decode("utf-8-sig")), delimiter=";"))
-        self.assertEqual(len(rows), 4)
-        self.assertEqual(rows[0]["Источник"].count("Демо"), 2)
-        self.assertEqual([r["Статус"] for r in rows].count("Сверить разные сроки"), 2)
-        self.assertEqual(rows[-1]["Срок (МСК)"], "Не уточнён")
-        self.assertNotRegex(first.decode("utf-8-sig"), r"архивный|личный документ|Спасибо")
 
     def test_calendar_boundaries_and_dates(self):
         for current, expected in [("2024-04-30", "2024-02-29"), ("2025-01-31", "2024-11-30")]:
@@ -141,18 +127,6 @@ class DigestTests(unittest.TestCase):
                 self.assertEqual(smtp.send_message.call_count, 1)
                 self.assertEqual(smtp.send_message.call_args.kwargs["to_addrs"], [env["DIGEST_EMAIL"]])
 
-    def test_classifier_has_only_synthetic_inputs_and_checks_ids(self):
-        with tempfile.TemporaryDirectory() as d, redirect_stdout(io.StringIO()), \
-                patch.object(study_agent, "model_json") as model:
-            expected = [{"id": "g1", "course": "Анализ данных"}, {"id": "g2", "course": "Управление проектами"}]
-            model.return_value = {"matches": expected}
-            study_agent.classify_demo("codex", Path(d))
-            groups = model.call_args.args[-1]["groups"]
-            self.assertEqual([g["id"] for g in groups], ["g1", "g2", "g3"])
-            for incorrect in ([{"id": "real", "course": "Анализ данных"}], expected[:1], expected + expected[:1]):
-                model.return_value = {"matches": incorrect}
-                with self.assertRaises(ValueError):
-                    study_agent.classify_demo("codex", Path(d))
 
     def test_expired_claude_login_explained_without_exposing_stdout(self):
         status = subprocess.CompletedProcess([], 0, b'{"authMethod":"claude.ai"}', b"")
@@ -160,23 +134,9 @@ class DigestTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d, patch.object(study_agent.shutil, "which", return_value="claude"), \
                 patch.object(subprocess, "run", side_effect=[status, error]), self.assertRaises(ValueError) as caught:
             study_agent.request("claude", Path(d), ["test"])
-        self.assertIn("python study.py auth claude", str(caught.exception))
+        self.assertIn("python digest.py auth claude", str(caught.exception))
         self.assertNotIn("secret", str(caught.exception))
 
-    def test_live_merges_streams_only_after_extraction(self):
-        with tempfile.TemporaryDirectory() as d, redirect_stdout(io.StringIO()), \
-                patch.object(study, "PRIVATE", Path(d) / "private"), patch.object(study, "OUT", Path(d) / "out"):
-            study.setup()
-            note = {"id":"1","course":"Анализ данных","text":"Сдать отчёт до 12.11.2026.","url":""}
-            tg_row = dict(course=note["course"], task="Откройте личный документ", due="", source="Telegram", url="")
-            (study.PRIVATE / "lms.json").write_text(json.dumps([note]))
-            cfg = dict(study.SETTINGS, allow_cloud=True, chats={"-123":note["course"]})
-            (study.PRIVATE / "settings.json").write_text(json.dumps(cfg))
-            with patch.object(sys, "argv", ["study.py", "run"]), \
-                    patch.object(study, "telegram", return_value=[tg_row]), patch.object(study, "extract", return_value=[]) as llm:
-                study.main()
-            self.assertEqual(llm.call_args.args[2], [note])
-            self.assertIn(tg_row["task"], (study.OUT / "live" / "digest.html").read_text(encoding="utf-8"))
 
     def test_spreadsheet_html_and_feed_url_protection(self):
         self.assertIn("'=1+1", study_report.csv_text([["=1+1"]]))

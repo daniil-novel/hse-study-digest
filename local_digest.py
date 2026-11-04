@@ -42,6 +42,7 @@ LONG_DATE = re.compile(r"\b(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(\d{4})(?:\
 
 
 def tasks_from_message(message, now, extra_rules=()):
+    """Извлечь действие по словарю. Имена людей и контакты в формулировку не копируются."""
     text = message.get("text") or ""
     found = set()
     for line in text.splitlines():
@@ -65,9 +66,8 @@ def tasks_from_message(message, now, extra_rules=()):
 
 
 async def harvest(cfg, private, *, discover_only=False, now=None, titles=None):
-    from local_plan import load_rules
-
-    rules = load_rules(private)
+    """Прочитать выбранные реальные чаты с учётом исключений и окна активности."""
+    rules = []  # Дополнительные правила задаёт пользователь в своём TOML.
     allowed_labels = {name for _, name in OBJECTS}
     for name, terms in cfg["local"].get("task_regex", {}).items():
         if (

@@ -3,8 +3,7 @@
 [mcp]
 enabled = true             # false разрешает работать только с источниками Smart LMS.
 executable = "telegram-mcp" # TODO: укажите полный путь, если MCP в другом окружении.
-env_file = "telegram.env"   # Файл в private/. Ключи Telegram в этот TOML не вносятся.
-demo = false               # true запускает настоящий процесс MCP с вымышленными данными.
+env_file = ".env"           # Файл в корне проекта. Ключи Telegram в этот TOML не вносятся.
 
 [agent]
 provider = "codex"          # TODO: codex (подписка ChatGPT) или claude (Claude Code).
@@ -54,3 +53,8 @@ calendar = ""               # Необязательно: файл .ics или �
 use_notes = false           # true добавляет свои разрешённые заметки из private/lms.json.
 [lms.api_courses]
 # TODO при выданном ВШЭ токене: "12345" = "Анализ данных".
+
+[service]
+scan_interval_seconds = 900     # Реальный сбор каждые 15 минут при доступном ноутбуке.
+tick_interval_seconds = 60      # Проверка расписания писем раз в минуту.
+command_timeout_seconds = 3600  # Ограничение одного сбора: час; при большом числе чатов увеличьте.

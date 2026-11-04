@@ -18,10 +18,8 @@ def init(private):
     files = {
         "study.toml": (templates / "study.toml").read_text(encoding="utf-8"),
         "chats.toml": (templates / "chats.toml").read_text(encoding="utf-8"),
-        "chats-demo.toml": (templates / "chats.toml").read_text(encoding="utf-8"),
         "telegram-scopes.toml": EMPTY_SCOPES_TOML,
         "lms.json": "[]\n",
-        "telegram.env": "# TODO: значения из my.telegram.org, только локально.\nTELEGRAM_API_ID=\nTELEGRAM_API_HASH=\nTELEGRAM_WRITE_ENABLED=false\n",
     }
     for name, content in files.items():
         try:
@@ -30,6 +28,15 @@ def init(private):
             continue
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
             stream.write(content)
+    # Инициализация в тестовой папке не должна создавать .env в реальном проекте.
+    env_path = (private.parent if private.name == "private" else private) / ".env"
+    try:
+        fd = os.open(env_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError:
+        pass  # Повторный init сохраняет уже введённые секреты.
+    else:
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            stream.write((templates / "environment.env").read_text(encoding="utf-8"))
     print("Настройки готовы в", private)
 
 
@@ -44,6 +51,21 @@ def read_toml(path):
 
 def settings(private):
     cfg = read_toml(private / "study.toml")
+    # Старые конфиги совместимы, но пользовательского режима demo больше нет.
+    if cfg["mcp"].get("demo", False):
+        raise ValueError("Демо-режим удалён из практикума. Используйте свой Telegram MCP.")
+    cfg["mcp"]["demo"] = False
+    if cfg["mcp"].get("env_file") == ".env":
+        cfg["mcp"]["env_file"] = str((private.parent / ".env").resolve())
+    # Окружение имеет приоритет для адреса и параметров доставки.
+    for key, name in (("address", "DIGEST_SMTP_ADDRESS"), ("host", "DIGEST_SMTP_HOST")):
+        if os.environ.get(name):
+            cfg["mail"][key] = os.environ[name]
+    if os.environ.get("DIGEST_SMTP_PORT"):
+        try:
+            cfg["mail"]["port"] = int(os.environ["DIGEST_SMTP_PORT"])
+        except ValueError:
+            raise ValueError("DIGEST_SMTP_PORT должен быть числом.") from None
     try:
         if cfg["agent"]["mode"] not in {"cloud", "local"} or cfg["agent"]["provider"] not in {
             "codex",

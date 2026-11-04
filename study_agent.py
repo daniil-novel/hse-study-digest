@@ -19,6 +19,7 @@ index — номер входной заметки. Каждая quote — не�
 
 
 def cli(provider, private):
+    """Найти CLI и выделить отдельное хранилище его авторизации для проекта."""
     binary = shutil.which(provider)
     if not binary:
         raise ValueError(f"Не найден {provider}. Установите CLI по ссылке из README.")
@@ -34,6 +35,7 @@ def cli(provider, private):
 
 
 def authenticate(provider, private):
+    """Один раз открыть штатный вход по подписке; последующие вызовы используют его результат."""
     binary, env = cli(provider, private)
     args = ["login"] if provider == "codex" else ["auth", "login"]
     with tempfile.TemporaryDirectory() as working:
@@ -42,6 +44,11 @@ def authenticate(provider, private):
 
 
 def model_json(provider, private, instructions, records):
+    """Получить структурированный ответ без доступа модели к диску проекта и его секретам.
+
+    Временная рабочая папка изолирует контекст текущего вызова. Сохранённая авторизация
+    остаётся в private, поэтому завершение короткого CLI-процесса не означает выход из аккаунта.
+    """
     binary, env = cli(provider, private)
     with tempfile.TemporaryDirectory() as working:
         if provider == "codex":
@@ -68,7 +75,8 @@ def model_json(provider, private, instructions, records):
             args = ["-p", "--safe-mode", "--restricted", "--tools", "", "--strict-mcp-config",
                     "--disallowedTools", "mcp__*", "--no-session-persistence"]
         if status.returncode or not subscription:
-            raise ValueError(f"Нет подтверждённого входа по подписке. Выполните python study.py auth {provider}.")
+            raise ValueError(f"Нет подтверждённого входа по подписке. Выполните python digest.py auth {provider}.")
+        # В prompt попадают только явно переданные записи; файлы .env здесь не читаются.
         prompt = instructions + json.dumps(records, ensure_ascii=False)
         result = subprocess.run([binary, *args], input=prompt.encode(), capture_output=True,
                                 env=env, cwd=working, timeout=240)
@@ -76,7 +84,7 @@ def model_json(provider, private, instructions, records):
         details = (result.stderr + result.stdout).lower()
         if provider == "claude" and (b"oauth session expired" in details or
                                      b"oauth token has expired" in details or b"login expired" in details):
-            raise ValueError("Вход Claude истёк. Выполните python study.py auth claude и повторите команду.")
+            raise ValueError("Вход Claude истёк. Выполните python digest.py auth claude и повторите команду.")
         raise ValueError("CLI не завершил извлечение. Проверьте версию, авторизацию, сеть и лимит подписки.")
     try:
         value = result.stdout.decode("utf-8-sig").strip()
@@ -87,6 +95,7 @@ def model_json(provider, private, instructions, records):
 
 
 def request(provider, private, texts):
+    """Проверить, что ответ ссылается на существующий вход и дословную цитату."""
     records = [dict(index=i, text=text) for i, text in enumerate(texts)]
     decoded = model_json(provider, private, INSTRUCTIONS, records)
     try:
@@ -107,6 +116,7 @@ def request(provider, private, texts):
 
 
 def extract(provider, private, notes):
+    """Разбить собственные заметки на небольшие порции и превратить подтверждения в строки."""
     rows = []
     for start in range(0, len(notes), 8):
         batch = notes[start:start + 8]
@@ -116,32 +126,3 @@ def extract(provider, private, notes):
             rows.append(dict(course=note["course"], task=quote.strip(), due=exact_due(quote),
                              source=f"Личная заметка · {note['id']}", url=note["url"]))
     return rows
-
-
-def classify_demo(provider, private):
-    # Deliberately closed input. No file, live dialog or per-user course is accepted.
-    courses = ["Анализ данных", "Управление проектами"]
-    groups = [
-        {"id": "g1", "title": "Панды в лаборатории", "excerpt": "Сдаём лабораторную по pandas и обработке таблиц."},
-        {"id": "g2", "title": "Команда семинара", "excerpt": "К защите подготовьте план проекта и реестр рисков."},
-        {"id": "g3", "title": "После семинара", "excerpt": "Гуляем в парке и выбираем кафе на вечер."},
-    ]
-    expected = {"g1": courses[0], "g2": courses[1]}
-    instructions = """Сопоставь вымышленные активные группы с курсами по теме обсуждения.
-Пропусти досуговые чаты. Верни только JSON {"matches":[{"id":"...","course":"..."}]}.
-Используй только идентификаторы и названия курсов из входных данных.\n"""
-    response = model_json(provider, private, instructions, {"courses": courses, "groups": groups})
-    try:
-        selected = {}
-        known = {g["id"] for g in groups}
-        for row in response["matches"]:
-            identifier, course = row["id"], row["course"]
-            if identifier not in known or course not in courses or identifier in selected:
-                raise ValueError
-            selected[identifier] = course
-    except (ValueError, KeyError, TypeError):
-        raise ValueError("Ответ классификатора содержит неизвестную группу, предмет или неверную структуру.") from None
-    print(json.dumps(selected, ensure_ascii=False, indent=2))
-    if selected != expected:
-        raise ValueError("Классификация отличается от эталона: g1 — Анализ данных, g2 — Управление проектами, g3 — досуг.")
-    print("Тест пройден: две учебные группы сопоставлены с курсами, досуговая исключена.")
